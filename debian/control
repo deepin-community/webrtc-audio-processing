@@ -1,0 +1,34 @@
+Source: webrtc-audio-processing
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Uploaders:
+ Sjoerd Simons <sjoerd@debian.org>,
+ Felipe Sateler <fsateler@debian.org>
+Section: libs
+Priority: optional
+Build-Depends: autotools-dev, debhelper (>= 9), dh-autoreconf
+Standards-Version: 3.9.8
+Vcs-Browser: https://anonscm.debian.org/cgit/pulseaudio/webrtc-audio-processing.git
+Vcs-Git: https://anonscm.debian.org/git/pkg-pulseaudio/webrtc-audio-processing.git
+Homepage: http://freedesktop.org/software/pulseaudio/webrtc-audio-processing/
+
+Package: libwebrtc-audio-processing-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libwebrtc-audio-processing1 (= ${binary:Version}), ${misc:Depends}
+Description: development files for the webrtc-audio-processing library
+ Audio processing library (echo-cancellation, gain control etc) around the
+ AudioProcessing module from the WebRTC project
+ .
+ Headers and libraries for developing applications using
+ libwebrtc-audio-processing
+
+Package: libwebrtc-audio-processing1
+Architecture: any
+Multi-Arch: same
+Section: libs
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Description: AudioProcessing module from the WebRTC project.
+ Audio processing library (echo-cancellation, gain control etc) around the
+ AudioProcessing module from the WebRTC project
