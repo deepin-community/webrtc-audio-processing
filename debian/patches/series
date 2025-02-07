@@ -1,2 +1,11 @@
 big-endian-support.patch
+avoid-sse2-on-i386.patch
 Add-generic-byte-order-and-pointer-size-detection.patch
+fix-mips-source-path.patch
+file_wrapper-include-stdint.patch
+task_queue_base-include-stdint.patch
+decode-base64-files.patch
+aecm-mips-use-uintptr_t.patch
+avoid-default-aecm-on-mips.patch
+drop-bad-mips-cflag.patch
+mips-vector-ops-dsp-guard.patch

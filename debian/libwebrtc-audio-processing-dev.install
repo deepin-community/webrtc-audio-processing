@@ -1,4 +1,6 @@
-usr/include/*
-usr/lib/*/lib*.a
-usr/lib/*/lib*.so
-usr/lib/*/pkgconfig/*
+usr/include/webrtc-audio-processing-1/api
+usr/include/webrtc-audio-processing-1/modules/audio_processing/*
+usr/include/webrtc-audio-processing-1/rtc_base
+usr/include/webrtc-audio-processing-1/system_wrappers
+usr/lib/*/libwebrtc-audio-processing-1.so
+usr/lib/*/pkgconfig/webrtc-audio-processing-1.pc
