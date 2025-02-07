@@ -1,0 +1,3 @@
+usr/include/webrtc-audio-processing-1/modules/audio_coding/*
+usr/lib/*/libwebrtc-audio-coding-1.so
+usr/lib/*/pkgconfig/webrtc-audio-coding-1.pc

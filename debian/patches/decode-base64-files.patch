@@ -1,0 +1,137 @@
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Date: Sat, 19 Oct 2024 18:00:06 +0300
+Subject: Decode base64-encoded third-party files
+Forwarded: https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/merge_requests/42
+Last-Update: 2024-11-01
+
+Some files were committed into the repository as base64 encoded files.
+Presumably, this is because the "text" download links on Google's
+Gitiles web interface sends them as such. These can be found by running
+`git grep "^[[:alnum:]]\{128,\}=*$"`. Decode them with `base64 -d`.
+
+Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+---
+ webrtc/third_party/pffft/LICENSE    | 46 ++++++++++++++++++++++++++++-
+ webrtc/third_party/rnnoise/BUILD.gn | 18 ++++++++++-
+ webrtc/third_party/rnnoise/COPYING  | 32 +++++++++++++++++++-
+ 3 files changed, 93 insertions(+), 3 deletions(-)
+
+diff --git a/webrtc/third_party/pffft/LICENSE b/webrtc/third_party/pffft/LICENSE
+index b37aae86966a..ea8623f35cbc 100644
+--- a/webrtc/third_party/pffft/LICENSE
++++ b/webrtc/third_party/pffft/LICENSE
+@@ -1 +1,45 @@
+-Q29weXJpZ2h0IChjKSAyMDEzICBKdWxpZW4gUG9tbWllciAoIHBvbW1pZXJAbW9kYXJ0dC5jb20gKQoKQmFzZWQgb24gb3JpZ2luYWwgZm9ydHJhbiA3NyBjb2RlIGZyb20gRkZUUEFDS3Y0IGZyb20gTkVUTElCLAphdXRob3JlZCBieSBEciBQYXVsIFN3YXJ6dHJhdWJlciBvZiBOQ0FSLCBpbiAxOTg1LgoKQXMgY29uZmlybWVkIGJ5IHRoZSBOQ0FSIGZmdHBhY2sgc29mdHdhcmUgY3VyYXRvcnMsIHRoZSBmb2xsb3dpbmcKRkZUUEFDS3Y1IGxpY2Vuc2UgYXBwbGllcyB0byBGRlRQQUNLdjQgc291cmNlcy4gTXkgY2hhbmdlcyBhcmUKcmVsZWFzZWQgdW5kZXIgdGhlIHNhbWUgdGVybXMuCgpGRlRQQUNLIGxpY2Vuc2U6CgpodHRwOi8vd3d3LmNpc2wudWNhci5lZHUvY3NzL3NvZnR3YXJlL2ZmdHBhY2s1L2Z0cGsuaHRtbAoKQ29weXJpZ2h0IChjKSAyMDA0IHRoZSBVbml2ZXJzaXR5IENvcnBvcmF0aW9uIGZvciBBdG1vc3BoZXJpYwpSZXNlYXJjaCAoIlVDQVIiKS4gQWxsIHJpZ2h0cyByZXNlcnZlZC4gRGV2ZWxvcGVkIGJ5IE5DQVIncwpDb21wdXRhdGlvbmFsIGFuZCBJbmZvcm1hdGlvbiBTeXN0ZW1zIExhYm9yYXRvcnksIFVDQVIsCnd3dy5jaXNsLnVjYXIuZWR1LgoKUmVkaXN0cmlidXRpb24gYW5kIHVzZSBvZiB0aGUgU29mdHdhcmUgaW4gc291cmNlIGFuZCBiaW5hcnkgZm9ybXMsCndpdGggb3Igd2l0aG91dCBtb2RpZmljYXRpb24sIGlzIHBlcm1pdHRlZCBwcm92aWRlZCB0aGF0IHRoZQpmb2xsb3dpbmcgY29uZGl0aW9ucyBhcmUgbWV0OgoKLSBOZWl0aGVyIHRoZSBuYW1lcyBvZiBOQ0FSJ3MgQ29tcHV0YXRpb25hbCBhbmQgSW5mb3JtYXRpb24gU3lzdGVtcwpMYWJvcmF0b3J5LCB0aGUgVW5pdmVyc2l0eSBDb3Jwb3JhdGlvbiBmb3IgQXRtb3NwaGVyaWMgUmVzZWFyY2gsCm5vciB0aGUgbmFtZXMgb2YgaXRzIHNwb25zb3JzIG9yIGNvbnRyaWJ1dG9ycyBtYXkgYmUgdXNlZCB0bwplbmRvcnNlIG9yIHByb21vdGUgcHJvZHVjdHMgZGVyaXZlZCBmcm9tIHRoaXMgU29mdHdhcmUgd2l0aG91dApzcGVjaWZpYyBwcmlvciB3cml0dGVuIHBlcm1pc3Npb24uCgotIFJlZGlzdHJpYnV0aW9ucyBvZiBzb3VyY2UgY29kZSBtdXN0IHJldGFpbiB0aGUgYWJvdmUgY29weXJpZ2h0Cm5vdGljZXMsIHRoaXMgbGlzdCBvZiBjb25kaXRpb25zLCBhbmQgdGhlIGRpc2NsYWltZXIgYmVsb3cuCgotIFJlZGlzdHJpYnV0aW9ucyBpbiBiaW5hcnkgZm9ybSBtdXN0IHJlcHJvZHVjZSB0aGUgYWJvdmUgY29weXJpZ2h0Cm5vdGljZSwgdGhpcyBsaXN0IG9mIGNvbmRpdGlvbnMsIGFuZCB0aGUgZGlzY2xhaW1lciBiZWxvdyBpbiB0aGUKZG9jdW1lbnRhdGlvbiBhbmQvb3Igb3RoZXIgbWF0ZXJpYWxzIHByb3ZpZGVkIHdpdGggdGhlCmRpc3RyaWJ1dGlvbi4KClRISVMgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwKRVhQUkVTUyBPUiBJTVBMSUVELCBJTkNMVURJTkcsIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRgpNRVJDSEFOVEFCSUxJVFksIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORApOT05JTkZSSU5HRU1FTlQuIElOIE5PIEVWRU5UIFNIQUxMIFRIRSBDT05UUklCVVRPUlMgT1IgQ09QWVJJR0hUCkhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIElORElSRUNULCBJTkNJREVOVEFMLCBTUEVDSUFMLApFWEVNUExBUlksIE9SIENPTlNFUVVFTlRJQUwgREFNQUdFUyBPUiBPVEhFUiBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4KQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORyBGUk9NLCBPVVQgT0YgT1IgSU4KQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SIE9USEVSIERFQUxJTkdTIFdJVEggVEhFClNPRlRXQVJFLgo=
+\ No newline at end of file
++Copyright (c) 2013  Julien Pommier ( pommier@modartt.com )
++
++Based on original fortran 77 code from FFTPACKv4 from NETLIB,
++authored by Dr Paul Swarztrauber of NCAR, in 1985.
++
++As confirmed by the NCAR fftpack software curators, the following
++FFTPACKv5 license applies to FFTPACKv4 sources. My changes are
++released under the same terms.
++
++FFTPACK license:
++
++http://www.cisl.ucar.edu/css/software/fftpack5/ftpk.html
++
++Copyright (c) 2004 the University Corporation for Atmospheric
++Research ("UCAR"). All rights reserved. Developed by NCAR's
++Computational and Information Systems Laboratory, UCAR,
++www.cisl.ucar.edu.
++
++Redistribution and use of the Software in source and binary forms,
++with or without modification, is permitted provided that the
++following conditions are met:
++
++- Neither the names of NCAR's Computational and Information Systems
++Laboratory, the University Corporation for Atmospheric Research,
++nor the names of its sponsors or contributors may be used to
++endorse or promote products derived from this Software without
++specific prior written permission.
++
++- Redistributions of source code must retain the above copyright
++notices, this list of conditions, and the disclaimer below.
++
++- Redistributions in binary form must reproduce the above copyright
++notice, this list of conditions, and the disclaimer below in the
++documentation and/or other materials provided with the
++distribution.
++
++THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO THE WARRANTIES OF
++MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++NONINFRINGEMENT. IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT
++HOLDERS BE LIABLE FOR ANY CLAIM, INDIRECT, INCIDENTAL, SPECIAL,
++EXEMPLARY, OR CONSEQUENTIAL DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE
++SOFTWARE.
+diff --git a/webrtc/third_party/rnnoise/BUILD.gn b/webrtc/third_party/rnnoise/BUILD.gn
+index 7bfa7844471b..48830aefd862 100644
+--- a/webrtc/third_party/rnnoise/BUILD.gn
++++ b/webrtc/third_party/rnnoise/BUILD.gn
+@@ -1 +1,17 @@
+-IyBDb3B5cmlnaHQgMjAxOCBUaGUgQ2hyb21pdW0gQXV0aG9ycy4gQWxsIHJpZ2h0cyByZXNlcnZlZC4KIyBVc2Ugb2YgdGhpcyBzb3VyY2UgY29kZSBpcyBnb3Zlcm5lZCBieSBhIEJTRC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlCiMgZm91bmQgaW4gdGhlIExJQ0VOU0UgZmlsZS4KCmltcG9ydCgiLy90ZXN0aW5nL3Rlc3QuZ25pIikKCmdyb3VwKCJybm5vaXNlIikgewogIGRlcHMgPSBbICI6cm5uX3ZhZCIgXQp9Cgpzb3VyY2Vfc2V0KCJybm5fdmFkIikgewogIHNvdXJjZXMgPSBbCiAgICAic3JjL3Jubl9hY3RpdmF0aW9ucy5oIiwKICAgICJzcmMvcm5uX3ZhZF93ZWlnaHRzLmNjIiwKICAgICJzcmMvcm5uX3ZhZF93ZWlnaHRzLmgiLAogIF0KfQo=
+\ No newline at end of file
++# Copyright 2018 The Chromium Authors. All rights reserved.
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++import("//testing/test.gni")
++
++group("rnnoise") {
++  deps = [ ":rnn_vad" ]
++}
++
++source_set("rnn_vad") {
++  sources = [
++    "src/rnn_activations.h",
++    "src/rnn_vad_weights.cc",
++    "src/rnn_vad_weights.h",
++  ]
++}
+diff --git a/webrtc/third_party/rnnoise/COPYING b/webrtc/third_party/rnnoise/COPYING
+index 6e286fdac5b7..01ea4b1a2ac0 100644
+--- a/webrtc/third_party/rnnoise/COPYING
++++ b/webrtc/third_party/rnnoise/COPYING
+@@ -1 +1,31 @@
+-Q29weXJpZ2h0IChjKSAyMDE3LCBNb3ppbGxhCkNvcHlyaWdodCAoYykgMjAwNy0yMDE3LCBKZWFuLU1hcmMgVmFsaW4KQ29weXJpZ2h0IChjKSAyMDA1LTIwMTcsIFhpcGguT3JnIEZvdW5kYXRpb24KQ29weXJpZ2h0IChjKSAyMDAzLTIwMDQsIE1hcmsgQm9yZ2VyZGluZwoKUmVkaXN0cmlidXRpb24gYW5kIHVzZSBpbiBzb3VyY2UgYW5kIGJpbmFyeSBmb3Jtcywgd2l0aCBvciB3aXRob3V0Cm1vZGlmaWNhdGlvbiwgYXJlIHBlcm1pdHRlZCBwcm92aWRlZCB0aGF0IHRoZSBmb2xsb3dpbmcgY29uZGl0aW9ucwphcmUgbWV0OgoKLSBSZWRpc3RyaWJ1dGlvbnMgb2Ygc291cmNlIGNvZGUgbXVzdCByZXRhaW4gdGhlIGFib3ZlIGNvcHlyaWdodApub3RpY2UsIHRoaXMgbGlzdCBvZiBjb25kaXRpb25zIGFuZCB0aGUgZm9sbG93aW5nIGRpc2NsYWltZXIuCgotIFJlZGlzdHJpYnV0aW9ucyBpbiBiaW5hcnkgZm9ybSBtdXN0IHJlcHJvZHVjZSB0aGUgYWJvdmUgY29weXJpZ2h0Cm5vdGljZSwgdGhpcyBsaXN0IG9mIGNvbmRpdGlvbnMgYW5kIHRoZSBmb2xsb3dpbmcgZGlzY2xhaW1lciBpbiB0aGUKZG9jdW1lbnRhdGlvbiBhbmQvb3Igb3RoZXIgbWF0ZXJpYWxzIHByb3ZpZGVkIHdpdGggdGhlIGRpc3RyaWJ1dGlvbi4KCi0gTmVpdGhlciB0aGUgbmFtZSBvZiB0aGUgWGlwaC5PcmcgRm91bmRhdGlvbiBub3IgdGhlIG5hbWVzIG9mIGl0cwpjb250cmlidXRvcnMgbWF5IGJlIHVzZWQgdG8gZW5kb3JzZSBvciBwcm9tb3RlIHByb2R1Y3RzIGRlcml2ZWQgZnJvbQp0aGlzIHNvZnR3YXJlIHdpdGhvdXQgc3BlY2lmaWMgcHJpb3Igd3JpdHRlbiBwZXJtaXNzaW9uLgoKVEhJUyBTT0ZUV0FSRSBJUyBQUk9WSURFRCBCWSBUSEUgQ09QWVJJR0hUIEhPTERFUlMgQU5EIENPTlRSSUJVVE9SUwpgYEFTIElTJycgQU5EIEFOWSBFWFBSRVNTIE9SIElNUExJRUQgV0FSUkFOVElFUywgSU5DTFVESU5HLCBCVVQgTk9UCkxJTUlURUQgVE8sIFRIRSBJTVBMSUVEIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZIEFORCBGSVRORVNTIEZPUgpBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBUkUgRElTQ0xBSU1FRC4gIElOIE5PIEVWRU5UIFNIQUxMIFRIRSBGT1VOREFUSU9OCk9SIENPTlRSSUJVVE9SUyBCRSBMSUFCTEUgRk9SIEFOWSBESVJFQ1QsIElORElSRUNULCBJTkNJREVOVEFMLApTUEVDSUFMLCBFWEVNUExBUlksIE9SIENPTlNFUVVFTlRJQUwgREFNQUdFUyAoSU5DTFVESU5HLCBCVVQgTk9UCkxJTUlURUQgVE8sIFBST0NVUkVNRU5UIE9GIFNVQlNUSVRVVEUgR09PRFMgT1IgU0VSVklDRVM7IExPU1MgT0YgVVNFLApEQVRBLCBPUiBQUk9GSVRTOyBPUiBCVVNJTkVTUyBJTlRFUlJVUFRJT04pIEhPV0VWRVIgQ0FVU0VEIEFORCBPTiBBTlkKVEhFT1JZIE9GIExJQUJJTElUWSwgV0hFVEhFUiBJTiBDT05UUkFDVCwgU1RSSUNUIExJQUJJTElUWSwgT1IgVE9SVAooSU5DTFVESU5HIE5FR0xJR0VOQ0UgT1IgT1RIRVJXSVNFKSBBUklTSU5HIElOIEFOWSBXQVkgT1VUIE9GIFRIRSBVU0UKT0YgVEhJUyBTT0ZUV0FSRSwgRVZFTiBJRiBBRFZJU0VEIE9GIFRIRSBQT1NTSUJJTElUWSBPRiBTVUNIIERBTUFHRS4K
+\ No newline at end of file
++Copyright (c) 2017, Mozilla
++Copyright (c) 2007-2017, Jean-Marc Valin
++Copyright (c) 2005-2017, Xiph.Org Foundation
++Copyright (c) 2003-2004, Mark Borgerding
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted provided that the following conditions
++are met:
++
++- Redistributions of source code must retain the above copyright
++notice, this list of conditions and the following disclaimer.
++
++- Redistributions in binary form must reproduce the above copyright
++notice, this list of conditions and the following disclaimer in the
++documentation and/or other materials provided with the distribution.
++
++- Neither the name of the Xiph.Org Foundation nor the names of its
++contributors may be used to endorse or promote products derived from
++this software without specific prior written permission.
++
++THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION
++OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+base-commit: 9a202fb8c218223d24dfbbe6130053c68111e97a
+-- 
+2.45.2
+
